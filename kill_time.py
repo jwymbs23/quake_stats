@@ -11,6 +11,7 @@ with open(fname) as f:
 #            klist.append(f.xreadlines())
 #
 klist = [x.strip('\n') for x in klist]
+#klist = [x.split(' ') for x in klist]
 #print klist[0]
 start_indices_temp = [i for i, x in enumerate(klist) if x.find("InitGame") > 0]
 end_indices = [i for i, x in enumerate(klist) if x.find("Fraglimit") > 0]
@@ -37,10 +38,19 @@ game_lines = zip(start_indices, end_indices)
 if(len(start_indices) != len(end_indices)):
     print "error: weird number of games"
     sys.exit(0)
-
+game = []
 number_of_games = len(start_indices)
-for item in klist[start_indices[0]:end_indices[0]]:
-    print  item
+for item in klist[start_indices[0]:end_indices[0]+5]:
+    game.append(item.split())
+plist = []
+for item in game:
+    #assign character ids
+    if item[1] == "ClientUserinfoChanged:":
+        #new player:
+        plist.append(item[3].split("\\")[1])
+        #print plist
+    if len(plist) == 3:
+        
 #if klist[0] != "^3Match has begun!":
 #    sys.exit(0)
 
