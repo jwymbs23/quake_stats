@@ -49,7 +49,7 @@ for item in game:
         #new player:
         plist.append(item[3].split("\\")[1])
         #print plist
-    if len(plist) == 3:
+    if item[2] == "kill":
         
 #if klist[0] != "^3Match has begun!":
 #    sys.exit(0)
