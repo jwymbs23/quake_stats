@@ -1,5 +1,6 @@
-import os,sys
-
+import os,sys,re
+import numpy as np
+import matplotlib.pyplot as plt
 fname = 'game_log_test.log'
 
 klist = []
@@ -11,6 +12,7 @@ with open(fname) as f:
 #            klist.append(f.xreadlines())
 #
 klist = [x.strip('\n') for x in klist]
+klist = [re.sub(':','',x) for x in klist]
 #klist = [x.split(' ') for x in klist]
 #print klist[0]
 start_indices_temp = [i for i, x in enumerate(klist) if x.find("InitGame") > 0]
@@ -36,21 +38,72 @@ game_lines = zip(start_indices, end_indices)
 #print start_indices, end_indices
 
 if(len(start_indices) != len(end_indices)):
-    print "error: weird number of games"
+    print ("error: weird number of games")
     sys.exit(0)
 game = []
 number_of_games = len(start_indices)
 for item in klist[start_indices[0]:end_indices[0]+5]:
     game.append(item.split())
 plist = []
+kmat = np.asarray([[0,0,0],[0,0,0],[0,0,0]])
+score=[0,0,0]
+score_time = np.asarray([[0,0,0,0,0,0]])
 for item in game:
     #assign character ids
-    if item[1] == "ClientUserinfoChanged:":
+    if item[1] == "ClientUserinfoChanged":
         #new player:
         plist.append(item[3].split("\\")[1])
         #print plist
+<<<<<<< HEAD
     if item[2] == "kill":
         
+=======
+    if item[1] == "Kill":
+        ktest = int(item[2])
+        weapon = int(item[4])
+        if ktest == 1022:
+            kill = int(item[3])
+            dead = int(item[3])
+        else:
+            kill = int(item[2])
+            dead = int(item[3])
+        if kill == dead:
+            val = -1
+        else:
+            val = 1
+        score[kill] = score[kill] + val
+#        print(score_time.shape, score_time[0], score_time[0,:])
+        score_time = np.append(score_time,[score_time[-1,:]], axis = 0)
+#        print(score_time, len(score_time))
+        sec =  int(item[0][-2:])
+        minu = int(item[0][:-2])
+        time = sec + minu*60
+        score_time[score_time.shape[0]-1][kill*2] = score[kill]
+        score_time[score_time.shape[0]-1][kill*2+1] = time
+        kmat[kill][dead] = kmat[kill][dead] + val
+
+scores = np.sum(kmat,axis = 1)
+
+print( plist[0]," killed ",plist[1]," ",kmat[0][1]," times")
+print( plist[0]," killed ",plist[2]," ",kmat[0][2]," times, and had ",-kmat[0][0]," suicides.\n")
+print( plist[1]," killed ",plist[0]," ",kmat[1][0]," times")
+print( plist[1]," killed ",plist[2]," ",kmat[1][2]," times, and had ",-kmat[1][1]," suicides.\n")
+print( plist[2]," killed ",plist[0]," ",kmat[2][0]," times")
+print( plist[2]," killed ",plist[1]," ",kmat[2][1]," times, and had ",-kmat[2][2]," suicides.\n")
+
+windex = np.where(scores==20)
+
+winner = plist[windex[0][0]]
+
+print( "Winner is: ", winner)
+##print kmat
+#
+print(score_time[:1])    
+plt.plot(score_time[:,1], score_time[:,0], label=plist[0], marker='+', color = 'green')
+plt.plot(score_time[:,3], score_time[:,2], label=plist[1], marker='+', color = 'blue')
+plt.plot(score_time[:,5], score_time[:,4], label=plist[2], marker='+', color = 'red')
+plt.show()
+>>>>>>> d5108de19b8b5fdb214c1a5b4588d3d15ec4fa4c
 #if klist[0] != "^3Match has begun!":
 #    sys.exit(0)
 
