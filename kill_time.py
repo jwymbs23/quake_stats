@@ -1,7 +1,7 @@
 import os,sys,re
 import numpy as np
 import matplotlib.pyplot as plt
-fname = 'game_log_test.log'
+fname = 'games.log'
 
 klist = []
 
@@ -42,7 +42,9 @@ if(len(start_indices) != len(end_indices)):
     sys.exit(0)
 game = []
 number_of_games = len(start_indices)
-for item in klist[start_indices[0]:end_indices[0]+5]:
+print ("Number of games: ", number_of_games)
+game_no = number_of_games - 1
+for item in klist[start_indices[game_no]:end_indices[game_no]+5]:
     game.append(item.split())
 plist = []
 kmat = np.asarray([[0,0,0],[0,0,0],[0,0,0]])
@@ -54,10 +56,6 @@ for item in game:
         #new player:
         plist.append(item[3].split("\\")[1])
         #print plist
-<<<<<<< HEAD
-    if item[2] == "kill":
-        
-=======
     if item[1] == "Kill":
         ktest = int(item[2])
         weapon = int(item[4])
@@ -91,19 +89,20 @@ print( plist[1]," killed ",plist[2]," ",kmat[1][2]," times, and had ",-kmat[1][1
 print( plist[2]," killed ",plist[0]," ",kmat[2][0]," times")
 print( plist[2]," killed ",plist[1]," ",kmat[2][1]," times, and had ",-kmat[2][2]," suicides.\n")
 
-windex = np.where(scores==20)
+windex = np.where(scores==max(scores))
 
 winner = plist[windex[0][0]]
-
+max_score = float(max(scores))
+print max_score
 print( "Winner is: ", winner)
 ##print kmat
 #
 print(score_time[:1])    
-plt.plot(score_time[:,1], score_time[:,0], label=plist[0], marker='+', color = 'green')
-plt.plot(score_time[:,3], score_time[:,2], label=plist[1], marker='+', color = 'blue')
-plt.plot(score_time[:,5], score_time[:,4], label=plist[2], marker='+', color = 'red')
+plt.plot(score_time[:,1], score_time[:,0]/max_score, label=plist[0], marker='+', color = 'green')
+plt.plot(score_time[:,3], score_time[:,2]/max_score, label=plist[1], marker='+', color = 'blue')
+plt.plot(score_time[:,5], score_time[:,4]/max_score, label=plist[2], marker='+', color = 'red')
 plt.show()
->>>>>>> d5108de19b8b5fdb214c1a5b4588d3d15ec4fa4c
+
 #if klist[0] != "^3Match has begun!":
 #    sys.exit(0)
 
